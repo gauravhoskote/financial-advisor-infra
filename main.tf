@@ -29,3 +29,13 @@ module "analyst_inf_profile" {
   application_key = "jpmc_fin_advisory"
   environment = var.environment
 }
+
+module "embedding_inf_profile" {
+  source = "./modules/bedrock_inference_profile"
+  model_arn = "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"
+  ai_inference_profile_name = "embedding-profile"
+  description = "Inference profile for financial advisory EMBEDDING model"
+  module_key = "jpmc_fin_advisory_embedding"
+  application_key = "jpmc_fin_advisory"
+  environment = var.environment
+}
