@@ -8,3 +8,19 @@ variable "environment" {
   default = "prod"
   type        = string
 }
+
+variable "embedding_model_arn" {
+  description = "ARN of the Bedrock embedding model"
+  type        = string
+  default     = "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"
+}
+
+variable "opensearch_collection_arn" {
+  description = "ARN of the OpenSearch Serverless collection used as the knowledge base vector store"
+  type        = string
+}
+
+variable "vector_index_name" {
+  description = "Name of the vector index in the OpenSearch Serverless collection"
+  type        = string
+}

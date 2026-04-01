@@ -32,7 +32,7 @@ module "analyst_inf_profile" {
 
 module "embedding_inf_profile" {
   source = "./modules/bedrock_inference_profile"
-  model_arn = "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"
+  model_arn = var.embedding_model_arn
   ai_inference_profile_name = "embedding-profile"
   description = "Inference profile for financial advisory EMBEDDING model"
   module_key = "jpmc_fin_advisory_embedding"
@@ -47,9 +47,7 @@ module "knowledge_base_bucket" {
   application_key = "jpmc_fin_advisory"
   created_by      = "terraform"
   tags = {
-    application_key = "jpmc_fin_advisory"
-    module_key      = "jpmc_fin_advisory_knowledge_base"
-    environment     = var.environment
+    environment = var.environment
   }
 }
 
@@ -57,4 +55,20 @@ module "knowledge_base_upload" {
   source          = "./modules/s3_upload"
   bucket_id       = module.knowledge_base_bucket.bucket_id
   local_directory = "${path.root}/data_upload/knoweldge_base_articles"
+}
+
+module "knowledge_base" {
+  source = "./modules/bedrock_knowledge_base"
+
+  knowledge_base_name       = "jpmc-fin-advisory-kb-${var.environment}"
+  bucket_arn                = module.knowledge_base_bucket.bucket_arn
+  knowledge_base_type       = "VECTOR"
+  embedding_model_arn       = var.embedding_model_arn
+  opensearch_collection_arn = var.opensearch_collection_arn
+  vector_index_name         = var.vector_index_name
+  application_key           = "jpmc_fin_advisory"
+  module_key                = "jpmc_fin_advisory_knowledge_base"
+  tags = {
+    environment = var.environment
+  }
 }
