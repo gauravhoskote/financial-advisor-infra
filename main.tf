@@ -39,3 +39,22 @@ module "embedding_inf_profile" {
   application_key = "jpmc_fin_advisory"
   environment = var.environment
 }
+
+module "knowledge_base_bucket" {
+  source      = "./modules/s3_bucket"
+  bucket_name = "jpmc-fin-advisory-knowledge-base-${var.environment}"
+  module_key      = "jpmc_fin_advisory_knowledge_base"
+  application_key = "jpmc_fin_advisory"
+  created_by      = "terraform"
+  tags = {
+    application_key = "jpmc_fin_advisory"
+    module_key      = "jpmc_fin_advisory_knowledge_base"
+    environment     = var.environment
+  }
+}
+
+module "knowledge_base_upload" {
+  source          = "./modules/s3_upload"
+  bucket_id       = module.knowledge_base_bucket.bucket_id
+  local_directory = "${path.root}/data_upload/knoweldge_base_articles"
+}
