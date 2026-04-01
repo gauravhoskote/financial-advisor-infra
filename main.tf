@@ -57,28 +57,22 @@ module "knowledge_base_upload" {
   local_directory = "${path.root}/data_upload/knoweldge_base_articles"
 }
 
-module "opensearch" {
-  source          = "./modules/opensearch_serverless"
-  collection_name = "jpmc-fin-advisory-${var.environment}"
-  description     = "Vector store for financial advisory knowledge base"
-  application_key = "jpmc_fin_advisory"
-  module_key      = "jpmc_fin_advisory_opensearch"
-  tags = {
-    environment = var.environment
-  }
+module "s3_vectors" {
+  source             = "./modules/s3_vectors"
+  vector_bucket_name = "jpmc-fin-advisory-vectors-${var.environment}"
+  index_name         = "jpmc-fin-advisory-index"
 }
 
 module "knowledge_base" {
   source = "./modules/bedrock_knowledge_base"
 
-  knowledge_base_name       = "jpmc-fin-advisory-kb-${var.environment}"
-  bucket_arn                = module.knowledge_base_bucket.bucket_arn
-  knowledge_base_type       = "VECTOR"
-  embedding_model_arn       = var.embedding_model_arn
-  opensearch_collection_arn = module.opensearch.collection_arn
-  vector_index_name         = var.vector_index_name
-  application_key           = "jpmc_fin_advisory"
-  module_key                = "jpmc_fin_advisory_knowledge_base"
+  knowledge_base_name  = "jpmc-fin-advisory-kb-${var.environment}"
+  bucket_arn           = module.knowledge_base_bucket.bucket_arn
+  knowledge_base_type  = "VECTOR"
+  embedding_model_arn  = var.embedding_model_arn
+  s3_vectors_index_arn = module.s3_vectors.index_arn
+  application_key      = "jpmc_fin_advisory"
+  module_key           = "jpmc_fin_advisory_knowledge_base"
   tags = {
     environment = var.environment
   }

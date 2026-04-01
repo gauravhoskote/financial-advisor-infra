@@ -11,8 +11,8 @@ resource "aws_iam_role" "kb_role" {
   })
 }
 
-resource "aws_iam_role_policy" "kb_s3_policy" {
-  name = "bedrock-kb-s3-access"
+resource "aws_iam_role_policy" "kb_policy" {
+  name = "bedrock-kb-access"
   role = aws_iam_role.kb_role.id
 
   policy = jsonencode({
@@ -32,9 +32,14 @@ resource "aws_iam_role_policy" "kb_s3_policy" {
         Resource = var.embedding_model_arn
       },
       {
-        Effect   = "Allow"
-        Action   = ["aoss:APIAccessAll"]
-        Resource = var.opensearch_collection_arn
+        Effect = "Allow"
+        Action = [
+          "s3vectors:PutVectors",
+          "s3vectors:GetVectors",
+          "s3vectors:DeleteVectors",
+          "s3vectors:QueryVectors"
+        ]
+        Resource = var.s3_vectors_index_arn
       }
     ]
   })
@@ -55,15 +60,9 @@ resource "aws_bedrockagent_knowledge_base" "kb" {
   }
 
   storage_configuration {
-    type = "OPENSEARCH_SERVERLESS"
-    opensearch_serverless_configuration {
-      collection_arn    = var.opensearch_collection_arn
-      vector_index_name = var.vector_index_name
-      field_mapping {
-        vector_field   = "bedrock-knowledge-base-default-vector"
-        text_field     = "AMAZON_BEDROCK_TEXT_CHUNK"
-        metadata_field = "AMAZON_BEDROCK_METADATA"
-      }
+    type = "S3_VECTORS"
+    s3_vectors_configuration {
+      index_arn = var.s3_vectors_index_arn
     }
   }
 

@@ -23,13 +23,8 @@ variable "embedding_model_arn" {
   type        = string
 }
 
-variable "opensearch_collection_arn" {
-  description = "ARN of the OpenSearch Serverless collection used as vector store"
-  type        = string
-}
-
-variable "vector_index_name" {
-  description = "Name of the vector index in the OpenSearch Serverless collection"
+variable "s3_vectors_index_arn" {
+  description = "ARN of the S3 Vectors index used as the vector store"
   type        = string
 }
 

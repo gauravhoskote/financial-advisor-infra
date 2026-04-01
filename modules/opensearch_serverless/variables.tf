@@ -9,6 +9,16 @@ variable "description" {
   default     = ""
 }
 
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
+variable "vector_index_name" {
+  description = "Name of the vector index to create inside the collection"
+  type        = string
+}
+
 variable "application_key" {}
 variable "module_key" {}
 

@@ -14,8 +14,3 @@ variable "embedding_model_arn" {
   type        = string
   default     = "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"
 }
-
-variable "vector_index_name" {
-  description = "Name of the vector index in the OpenSearch Serverless collection"
-  type        = string
-}
